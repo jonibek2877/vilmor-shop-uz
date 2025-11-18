@@ -383,6 +383,29 @@ window.trackOrder = function(){
       Object.values(orders).forEach(order => {
           if(order.tracking.toUpperCase() === input.toUpperCase()){
               found = true;
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyDuRi10dPRRY6gMEHh0v-UoOMsF65QZ4Pg",
+    authDomain: "vilmor-shop.firebaseapp.com",
+    projectId: "vilmor-shop",
+    storageBucket: "vilmor-shop.firebasestorage.app",
+    messagingSenderId: "834134005672",
+    appId: "1:834134005672:web:4d2ee16365001f2bbeaf9d",
+    measurementId: "G-RYMH7Z3FV9"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+
 </script>
 </body>
 </html>
