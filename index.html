@@ -1,0 +1,236 @@
+> 𝑱𝒐𝒏𝒊𝒃𝒆𝒌 𝑶𝒍𝒊𝒎𝒐𝒗𝒊𝒄𝒉:
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VILMOR SHOP - Online Do'kon</title>
+<style>
+body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f5f5; text-align:center; }
+header { background:#0077cc; color:white; padding:20px; font-size:24px; font-weight:bold; }
+main { padding:20px; display:flex; flex-direction:column; align-items:center; gap:20px; }
+button { padding:15px 30px; font-size:18px; border:none; border-radius:6px; cursor:pointer; transition:0.2s; }
+button:hover { opacity:0.9; }
+.admin-btn { background:#ffc107; color:black; }
+.customer-btn { background:#28a745; color:white; }
+
+/* Mijoz paneli */
+section { background:white; padding:20px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); max-width:500px; margin:auto; text-align:left; }
+input, button.tracking-btn { width:100%; padding:10px; margin:5px 0; box-sizing:border-box; font-size:16px; border-radius:4px; }
+button.tracking-btn { background:#0077cc; color:white; border:none; cursor:pointer; }
+#orderStatus { margin-top:15px; font-size:16px; color:#0077cc; word-break: break-word; }
+
+/* Admin popup */
+#adminPopup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
+ background:white; padding:20px; border-radius:8px; box-shadow:0 0 15px rgba(0,0,0,0.3); width:90%; max-width:500px; z-index:1000; cursor:move; overflow:auto; max-height:90vh; }
+#overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; }
+
+input, button.admin-btn-popup { width:100%; margin:5px 0; padding:10px; font-size:16px; border-radius:4px; }
+button.admin-btn-popup { background:#28a745; color:white; border:none; cursor:pointer; }
+.admin-section h4 { margin-top:0; }
+
+/* Admin cards style */
+.admin-card {
+    border: 1px solid #0077cc;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px 0;
+    background:#f9f9f9;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align:left;
+}
+.admin-card p { margin:4px 0; font-size:14px; }
+.admin-card button { margin-top:5px; margin-right:5px; padding:4px 8px; font-size:13px; }
+
+@media screen and (max-width:600px){
+    button { font-size:16px; padding:12px 20px; }
+    input, button.tracking-btn, button.admin-btn-popup { font-size:14px; padding:8px; }
+    #adminPopup { width:95%; padding:15px; }
+}
+</style>
+</head>
+<body>
+
+<header>VILMOR SHOP – Online Do‘kon</header>
+
+<main id="home">
+    <button class="admin-btn" onclick="enterAdmin()">Admin Panel</button>
+    <button class="customer-btn" onclick="showCustomer()">Mijozlar Paneli</button>
+</main>
+
+<!-- Mijozlar paneli -->
+<section id="customerPanel" style="display:none;">
+    <h2>Buyurtma Kuzatuvchi</h2>
+    <input type="text" id="trackingNumber" placeholder="Tracking raqamni kiriting">
+    <button class="tracking-btn" onclick="trackOrder()">Kuzatish 🔍</button>
+    <div id="orderStatus"></div>
+</section>
+
+<!-- Overlay va Admin popup -->
+<div id="overlay"></div>
+<div id="adminPopup">
+    <h2 id="adminHeader">Admin Panel</h2>
+    <div class="admin-section">
+        <h4>Yangi Buyurtma Qo‘shish</h4>
+        <input type="text" id="newTracking" placeholder="Tracking raqam">
+        <input type="text" id="newCustomer" placeholder="Mijoz ismi">
+        <input type="text" id="newPhone" placeholder="Telefon raqam">
+        <input type="text" id="newAddress" placeholder="Manzil">
+        <input type="text" id="newStatus" placeholder="Holat">
+        <button class="admin-btn-popup" onclick="addOrder()">Qo‘shish</button>
+    </div>
+    <div class="admin-section">
+        <h4>Allaqachon Qo‘shilgan Buyurtmalar</h4>
+        <div id="ordersTable"></div>
+    </div>
+    <button class="admin-btn-popup" onclick="closeAdmin()">Yopish</button>
+</div>
+
+<script>
+const adminPassword = "1234";
+let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+
+// ===== Home page actions =====
+function enterAdmin(){
+    const pass = prompt("Admin parolni kiriting:");
+    if(pass === adminPassword){
+        document.
+
+> 𝑱𝒐𝒏𝒊𝒃𝒆𝒌 𝑶𝒍𝒊𝒎𝒐𝒗𝒊𝒄𝒉:
+getElementById("overlay").style.display="block";
+        document.getElementById("adminPopup").style.display="block";
+        displayOrders();
+    } else {
+        alert("Parol noto‘g‘ri!");
+    }
+}
+
+function closeAdmin(){
+    document.getElementById("overlay").style.display="none";
+    document.getElementById("adminPopup").style.display="none";
+}
+
+function showCustomer(){
+    document.getElementById("home").style.display = "none";
+    document.getElementById("customerPanel").style.display = "block";
+}
+
+// ===== Admin functions =====
+function saveOrders(){ localStorage.setItem("orders", JSON.stringify(orders)); }
+
+function displayOrders(){
+    const tableDiv = document.getElementById("ordersTable");
+    tableDiv.innerHTML = "";
+    if(orders.length===0){
+        tableDiv.innerHTML="<p>Hozircha buyurtmalar mavjud emas.</p>";
+        return;
+    }
+    orders.forEach((order, index)=>{
+        const card = document.createElement("div");
+        card.className = "admin-card";
+        card.innerHTML = `
+            <p><strong>ID:</strong> ${index+1}</p>
+            <p><strong>Tracking #:</strong> ${order.tracking}</p>
+            <p><strong>Mijoz:</strong> ${order.customer}</p>
+            <p><strong>Telefon:</strong> ${order.phone}</p>
+            <p><strong>Manzil:</strong> ${order.address}</p>
+            <p><strong>Holat:</strong> ${order.status}</p>
+            <p><strong>Vaqt:</strong> ${order.time}</p>
+            <button class="btn-edit" onclick="editOrder(${index})">Tahrirlash</button>
+            <button class="btn-delete" onclick="deleteOrder(${index})">O‘chirish</button>
+        `;
+        tableDiv.appendChild(card);
+    });
+}
+
+function addOrder(){
+    const tracking = document.getElementById("newTracking").value.trim();
+    const customer = document.getElementById("newCustomer").value.trim();
+    const phone = document.getElementById("newPhone").value.trim();
+    const address = document.getElementById("newAddress").value.trim();
+    const status = document.getElementById("newStatus").value.trim();
+    if(!tracking⠞⠞⠵⠞⠟⠟⠞⠺⠟⠵⠵⠵⠺!phone⠟⠞⠟⠞⠵⠵⠟⠟⠞⠞⠞⠟!status){
+        alert("Iltimos, barcha maydonlarni to‘ldiring.");
+        return;
+    }
+    const now = new Date();
+    const timeString = now.toLocaleString();
+    orders.push({tracking, customer, phone, address, status, time: timeString});
+    saveOrders();
+    document.getElementById("newTracking").value="";
+    document.getElementById("newCustomer").value="";
+    document.getElementById("newPhone").value="";
+    document.getElementById("newAddress").value="";
+    document.getElementById("newStatus").value="";
+    displayOrders();
+}
+
+function editOrder(index){
+    const newStatus = prompt("Yangi holatni kiriting:", orders[index].status);
+    if(newStatus!==null && newStatus.trim()!==""){
+        orders[index].status = newStatus.trim();
+        orders[index].time = new Date().toLocaleString();
+        saveOrders();
+        displayOrders();
+    }
+}
+
+function deleteOrder(index){
+    if(confirm("Rostdan o‘chirmoqchimisiz?")){
+        orders.splice(index,1);
+        saveOrders();
+        displayOrders();
+    }
+}
+
+// ===== Customer tracking =====
+function trackOrder(){
+    const input = document.getElementById("trackingNumber").value.trim();
+    const statusDiv = document.getElementById("orderStatus");
+    if(input===""){
+        statusDiv.innerHTML="Iltimos, tracking raqamni kiriting.";
+        return;
+    }
+    const order = orders.find(o=>o.tracking.toUpperCase()===input.toUpperCase());
+    if(order){
+        statusDiv.innerHTML=`
+            <p><strong>Mijoz:</strong> ${order.customer}</p>
+            <p><strong>Telefon:</strong> ${order.phone}</p>
+            <p><strong>Manzil:</strong> ${order.address}</p>
+            <p><strong>Holat:</strong> ${order.status}</p>
+            <p><strong>Vaqt:</strong> ${order.time}</p>
+        `;
+    } else {
+        statusDiv.innerHTML="Bunday tracking raqam topilmadi.";
+    }
+}
+
+// ===== Make admin popup draggable =====
+dragElement(document.getElementById("adminPopup"));
+function dragElement(elmnt) {
+
+> 𝑱𝒐𝒏𝒊𝒃𝒆𝒌 𝑶𝒍𝒊𝒎𝒐𝒗𝒊𝒄𝒉:
+let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  const header = document.getElementById("adminHeader");
+  if(header){ header.onmousedown = dragMouseDown; } else { elmnt.onmousedown = dragMouseDown; }
+  function dragMouseDown(e) {
+    e = e || window.event; e.preventDefault();
+    pos3 = e.clientX; pos4 = e.clientY;
+    document.onmouseup = closeDragElement; document.onmousemove = elementDrag;
+  }
+  function elementDrag(e) {
+    e = e || window.event; e.preventDefault();
+    pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
+    pos3 = e.clientX; pos4 = e.clientY;
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+  function closeDragElement() {
+    document.onmouseup = null; document.onmousemove = null;
+  }
+}
+</script>
+
+</body>
+</html>
+
