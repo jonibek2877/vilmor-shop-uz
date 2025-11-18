@@ -1,4 +1,4 @@
-> 𝑱𝒐𝒏𝒊𝒃𝒆𝒌 𝑶𝒍𝒊𝒎𝒐𝒗𝒊𝒄𝒉:
+𝑱𝒐𝒏𝒊𝒃𝒆𝒌 𝑶𝒍𝒊𝒎𝒐𝒗𝒊𝒄𝒉
 <!DOCTYPE html>
 <html lang="uz">
 <head>
@@ -96,7 +96,6 @@ function enterAdmin(){
     if(pass === adminPassword){
         document.
 
-> 𝑱𝒐𝒏𝒊𝒃𝒆𝒌 𝑶𝒍𝒊𝒎𝒐𝒗𝒊𝒄𝒉:
 getElementById("overlay").style.display="block";
         document.getElementById("adminPopup").style.display="block";
         displayOrders();
@@ -149,7 +148,7 @@ function addOrder(){
     const phone = document.getElementById("newPhone").value.trim();
     const address = document.getElementById("newAddress").value.trim();
     const status = document.getElementById("newStatus").value.trim();
-    if(!tracking⠞⠞⠵⠞⠟⠟⠞⠺⠟⠵⠵⠵⠺!phone⠟⠞⠟⠞⠵⠵⠟⠟⠞⠞⠞⠟!status){
+   if(!tracking || !customer || !phone || !address || !status){
         alert("Iltimos, barcha maydonlarni to‘ldiring.");
         return;
     }
@@ -209,7 +208,6 @@ function trackOrder(){
 dragElement(document.getElementById("adminPopup"));
 function dragElement(elmnt) {
 
-> 𝑱𝒐𝒏𝒊𝒃𝒆𝒌 𝑶𝒍𝒊𝒎𝒐𝒗𝒊𝒄𝒉:
 let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   const header = document.getElementById("adminHeader");
   if(header){ header.onmousedown = dragMouseDown; } else { elmnt.onmousedown = dragMouseDown; }
