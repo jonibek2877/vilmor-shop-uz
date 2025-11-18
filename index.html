@@ -252,6 +252,137 @@ function fetchOrdersFirebase() {
         console.log(data);
     })
 }
+<script type="module">
+
+/* === FIREBASE ULANISHI === */
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "SIZNING_API_KEY",
+  authDomain: "SIZNING_PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://SIZNING_PROJECT_ID-default-rtdb.firebaseio.com",
+  projectId: "SIZNING_PROJECT_ID",
+  storageBucket: "SIZNING_PROJECT_ID.appspot.com",
+  messagingSenderId: "SIZNING_SENDER_ID",
+  appId: "SIZNING_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+
+/* === BUYURTMA QO‘SHISH === */
+
+window.addOrder = function () {
+  const tracking = document.getElementById("newTracking").value.trim();
+  const customer = document.getElementById("newCustomer").value.trim();
+  const phone = document.getElementById("newPhone").value.trim();
+  const address = document.getElementById("newAddress").value.trim();
+  const status = document.getElementById("newStatus").value.trim();
+
+  if(!tracking  !customer  !phone  !address  !status){
+      alert("Iltimos, barcha maydonlarni to‘ldiring!");
+      return;
+  }
+
+  push(ref(db, "orders"), {
+      tracking, customer, phone, address, status,
+      time: new Date().toLocaleString()
+  });
+
+  document.getElementById("newTracking").value="";
+  document.getElementById("newCustomer").value="";
+  document.getElementById("newPhone").value="";
+  document.getElementById("newAddress").value="";
+  document.getElementById("newStatus").value="";
+};
+
+
+/* === BUYURTMALARNI LIVE O‘QISH === */
+
+window.displayOrders = function () {
+  const tableDiv = document.getElementById("ordersTable");
+  tableDiv.innerHTML = "<p>Yuklanmoqda...</p>";
+
+  onValue(ref(db, "orders"), (snapshot) => {
+      tableDiv.innerHTML = "";
+
+      if (!snapshot.exists()) {
+          tableDiv.innerHTML = "<p>Hozircha buyurtmalar yo‘q.</p>";
+          return;
+      }
+
+      const data = snapshot.val();
+      const keys = Object.keys(data);
+
+      keys.forEach((id, index) => {
+          const order = data[id];
+
+          const card = document.createElement("div");
+          card.className = "admin-card";
+
+          card.innerHTML = `
+              <p><strong>ID:</strong> ${index+1}</p>
+              <p><strong>Tracking:</strong> ${order.tracking}</p>
+              <p><strong>Mijoz:</strong> ${order.customer}</p>
+              <p><strong>Telefon:</strong> ${order.phone}</p>
+              <p><strong>Manzil:</strong> ${order.address}</p>
+              <p><strong>Holat:</strong> ${order.status}</p>
+              <p><strong>Vaqt:</strong> ${order.time}</p>
+              <button onclick="editOrder('${id}', '${order.status}')">Tahrirlash</button>
+              <button onclick="deleteOrder('${id}')">O‘chirish</button>
+          `;
+
+          tableDiv.appendChild(card);
+      });
+  });
+};
+
+
+/* === BUYURTMA TAHRIRLASH === */
+window.editOrder = function (id, oldStatus) {
+  const newStatus = prompt("Yangi holat:", oldStatus);
+  if(newStatus && newStatus.trim() !== ""){
+      update(ref(db, "orders/" + id), {
+          status: newStatus.trim(),
+          time: new Date().toLocaleString()
+      });
+  }
+};
+
+
+/* === BUYURTMA O‘CHIRISH === */
+window.deleteOrder = function (id){
+  if(confirm("Buyurtma o‘chiriladi. Rozimisiz?")){
+      remove(ref(db, "orders/" + id));
+  }
+};
+
+
+/* === TRACKING QIDIRUV === */
+window.trackOrder = function(){
+  const input = document.getElementById("trackingNumber").value.trim();
+  const statusDiv = document.getElementById("orderStatus");
+
+  if(input === ""){
+      statusDiv.innerHTML="Tracking raqam kiriting!";
+      return;
+  }
+
+  onValue(ref(db, "orders"), (snapshot) => {
+      if (!snapshot.exists()) {
+          statusDiv.innerHTML="Buyurtmalar bazasi bo‘sh.";
+          return;
+      }
+
+      const orders = snapshot.val();
+      let found = false;
+
+      Object.values(orders).forEach(order => {
+          if(order.tracking.toUpperCase() === input.toUpperCase()){
+              found = true;
 </script>
 </body>
 </html>
